@@ -1,11 +1,11 @@
 import React from "react";
-import firebase from  './config/firebase';
+import firebase from './config/firebase';
 import './App.css';
 
 // Todo App Using React
 
 class App extends React.Component {
-  
+
   constructor() {
     super()
     this.state = {
@@ -20,7 +20,7 @@ class App extends React.Component {
     let obj = { title: this.state.value }
     //Firebase Database Connect Command
     firebase.database().ref('/').child("todos")
-    .push(obj)
+      .push(obj)
     // Two method but both are working same. Push array mai value ko picha se update krta hai or unshift aaga se.   
     // Using Spread state(...). Copy krta hai then kooma lga kr new value add bhi krskta hain. 
     // setState ==> State ko update krna Ka liye use krta hain. Aik se ziada state ko update krskta hain setState se.
@@ -41,6 +41,7 @@ class App extends React.Component {
     // })
   }
   delete_todo = (index) => {
+
     // console.log(index);
     this.state.todos.splice(index, 1)
     this.setState({
@@ -65,19 +66,30 @@ class App extends React.Component {
   }
   handleChange = (e, index) => {
     this.state.todos[index].title = e.target.value;
-      this.setState({
-        todos: this.state.todos
-      })
+    this.setState({
+      todos: this.state.todos
+    })
 
   }
-  update=(index)=>{
+  update = (index) => {
     this.state.todos[index].edit = false;
     this.setState({
       todos: this.state.todos
     })
   }
 
-  
+  //Yaha Fetching ka kaam hua hai Jo bhi Key name rakhen ga wo console mai dikha ga.
+  //idhr todos rakha hai.
+  componentDidMount() {
+    const myitems = firebase.database().ref('/').child('users');
+    myitems.on('value', (datasnap) => {
+      console.log(datasnap.val());
+
+
+    })
+  }
+
+
 
   render() {
     // Ye destructuring hoti hai. Agr isa use krna hai to nicha jaha jaha "this.state" likha hai wo hatadai.
@@ -102,9 +114,9 @@ class App extends React.Component {
           {this.state.todos.map((v, i) => {
             return <li key={i}>
               {/* {v.title} */}
-              {v.edit ? <input value={v.title} type="text" onChange={(e)=>this.handleChange(e,i)} /> : v.title}
+              {v.edit ? <input value={v.title} type="text" onChange={(e) => this.handleChange(e, i)} /> : v.title}
               {v.edit ?
-                <button onClick={()=>this.update(i)}>Update</button> :
+                <button onClick={() => this.update(i)}>Update</button> :
                 <button onClick={() => this.edit_todo(i)}>Edit</button>
               }
 
